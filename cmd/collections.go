@@ -50,6 +50,7 @@ func init() {
 	collectionsCmd.Flags().StringP("naming-convention", "n", "snake", `set the naming convention for the output models. 
 Possible values: 'snake', 'kebab', 'lower_camel', 'camel'`)
 	collectionsCmd.Flags().BoolP("single-file", "s", false, "stores all collections within single file")
+	collectionsCmd.Flags().BoolP("external-controller", "c", false, "sets the collection initializer to use external controller")
 }
 
 func generateCollections(cmd *cobra.Command, args []string) {
@@ -60,6 +61,13 @@ func generateCollections(cmd *cobra.Command, args []string) {
 		os.Exit(2)
 	}
 	singleFile, err := cmd.Flags().GetBool("single-file")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		cmd.Usage()
+		os.Exit(2)
+	}
+
+	externalController, err := cmd.Flags().GetBool("external-controller")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		cmd.Usage()
@@ -111,7 +119,7 @@ func generateCollections(cmd *cobra.Command, args []string) {
 	if !singleFile {
 		if !g.HasCollectionInitializer() {
 			fileName := filepath.Join(dir, "initialize_collections.neuron.go")
-			generateFile(fileName, "initialize_collections", buf, g.CollectionInitializer(false))
+			generateFile(fileName, "initialize_collections", buf, g.CollectionInitializer(externalController))
 		}
 
 		for _, collection := range g.Collections("") {
@@ -127,6 +135,7 @@ func generateCollections(cmd *cobra.Command, args []string) {
 	} else {
 		var testCollections, collections []*input.CollectionInput
 		for _, collection := range g.Collections("") {
+			collection.ExternalController = externalController
 			modelNames = append(modelNames, collection.Model.Name)
 			if collection.Model.TestFile {
 				testCollections = append(testCollections, collection)
@@ -135,16 +144,16 @@ func generateCollections(cmd *cobra.Command, args []string) {
 			}
 		}
 		if len(testCollections) > 0 {
-			generateSingleFileCollections(testCollections, dir, true, buf)
+			generateSingleFileCollections(testCollections, dir, true, externalController, buf)
 		}
 		if len(collections) > 0 {
-			generateSingleFileCollections(collections, dir, false, buf)
+			generateSingleFileCollections(collections, dir, false, externalController, buf)
 		}
 	}
 	fmt.Fprintf(os.Stdout, "Success. Generated collections for: %s models.\n", strings.Join(modelNames, ","))
 }
 
-func generateSingleFileCollections(collections []*input.CollectionInput, dir string, isTesting bool, buf *bytes.Buffer) {
+func generateSingleFileCollections(collections []*input.CollectionInput, dir string, isTesting, externalController bool, buf *bytes.Buffer) {
 	multiCollections := &input.MultiCollectionInput{}
 	imports := map[string]struct{}{}
 	for _, collection := range collections {
@@ -152,7 +161,7 @@ func generateSingleFileCollections(collections []*input.CollectionInput, dir str
 			imports[imp] = struct{}{}
 		}
 		multiCollections.PackageName = collection.PackageName
-		multiCollections.ExternalController = collection.ExternalController
+		multiCollections.ExternalController = externalController
 		multiCollections.Collections = append(multiCollections.Collections, collection)
 	}
 	for imp := range imports {

@@ -1,6 +1,7 @@
 package ast
 
 import (
+	"fmt"
 	"go/ast"
 
 	"github.com/neuronlabs/inflection"
@@ -9,7 +10,7 @@ import (
 	"github.com/neuronlabs/neuron-generator/input"
 )
 
-func (g *ModelGenerator) extractFileModels(d *ast.GenDecl, file *ast.File, pkg *packages.Package) (models []*input.Model) {
+func (g *ModelGenerator) extractFileModels(d *ast.GenDecl, file *ast.File, pkg *packages.Package) (models []*input.Model, err error) {
 	for _, spec := range d.Specs {
 		switch st := spec.(type) {
 		case *ast.TypeSpec:
@@ -46,17 +47,21 @@ func (g *ModelGenerator) extractFileModels(d *ast.GenDecl, file *ast.File, pkg *
 				}
 			}
 
-			if model := g.extractModel(file, structType, pkg, modelName); model != nil {
+			model, err := g.extractModel(file, structType, pkg, modelName)
+			if err != nil {
+				return nil, err
+			}
+			if model != nil {
 				models = append(models, model)
 			}
 		default:
 			continue
 		}
 	}
-	return models
+	return models, nil
 }
 
-func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType, pkg *packages.Package, modelName string) (model *input.Model) {
+func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType, pkg *packages.Package, modelName string) (model *input.Model, err error) {
 	model = &input.Model{
 		CollectionName: g.namerFunc(inflection.Plural(modelName)),
 		Name:           modelName,
@@ -115,7 +120,9 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 			continue
 		}
 		fieldPtr := &field
-		g.setModelField(structField, fieldPtr, false)
+		if err := g.setModelField(structField, fieldPtr, false); err != nil {
+			return nil, err
+		}
 		// Check if field is a primary key field.
 		if isPrimary(structField) {
 			model.Primary = fieldPtr
@@ -124,7 +131,7 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 	}
 
 	if model.Primary == nil {
-		return nil
+		return nil, nil
 	}
 	defaultModelPackages := []string{
 		"github.com/neuronlabs/neuron/errors",
@@ -134,6 +141,7 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 		model.Imports.Add(pkg)
 	}
 
+	fmt.Printf("Adding model: '%s'\n", model.Name)
 	g.models[model.Name] = model
 
 	for _, relation := range model.Relations {
@@ -156,17 +164,33 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 		pkgTypes[importedField.Ident.Name] = append(pkgTypes[importedField.Ident.Name], importedField.Ident)
 		g.importFields[importedField.Path] = pkgTypes
 	}
-	return model
+	return model, nil
 }
 
 func getArraySize(expr ast.Expr) string {
-	sl, ok := expr.(*ast.ArrayType)
-	if !ok {
-		return ""
+	switch x := expr.(type) {
+	case *ast.ArrayType:
+		return getArrayTypeSize(x)
+	case *ast.Ident:
+		if x.Obj == nil {
+			return ""
+		}
+		ts, ok := x.Obj.Decl.(*ast.TypeSpec)
+		if !ok {
+			return ""
+		}
+		return getArraySize(ts.Type)
+	case *ast.StarExpr:
+		return getArraySize(x.X)
+	case *ast.SelectorExpr:
+		return getArraySize(x.Sel)
 	}
+	return ""
+}
+
+func getArrayTypeSize(sl *ast.ArrayType) string {
 	if bl, ok := sl.Len.(*ast.BasicLit); ok {
 		return bl.Value
 	}
 	return ""
-
 }

@@ -111,14 +111,17 @@ func isDirectory(name string) bool {
 
 func parseTemplates() {
 	functionMap := template.FuncMap{
-		"toLowerCamel": strcase.ToLowerCamel,
-		"toSnake":      strcase.ToSnake,
-		"timestamp":    func() string { return time.Now().Format(time.RFC1123Z) },
-		"stringer":     tempfuncs.Stringer,
-		"stringParser": tempfuncs.Parser,
-		"wrapParser":   tempfuncs.ParserWrapper,
-		"selector":     tempfuncs.Selector,
-		"alternates":   tempfuncs.GetAlternateTypes,
+		"toLowerCamel":          strcase.ToLowerCamel,
+		"toSnake":               strcase.ToSnake,
+		"timestamp":             func() string { return time.Now().Format(time.RFC1123Z) },
+		"stringer":              tempfuncs.Stringer,
+		"stringParser":          tempfuncs.Parser,
+		"wrapParser":            tempfuncs.ParserWrapper,
+		"selector":              tempfuncs.Selector,
+		"alternates":            tempfuncs.GetAlternateTypes,
+		"isFieldWrappedSlice":   tempfuncs.IsFieldWrappedSlice,
+		"isWrappedTypeSlice":    tempfuncs.IsWrappedTypeSlice,
+		"fieldsWrappedTypeElem": tempfuncs.FieldsWrappedTypeElem,
 	}
 	templates = template.New("")
 	for _, tmpl := range bintemplates.AssetNames() {

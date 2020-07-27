@@ -7,12 +7,12 @@ package {{.PackageName}}
 
 {{template "imports" .}}
 
-func init() {
-{{range $collection := .Collections }}
-{{template "collection-initializer" $collection}}
-{{- end}}
+// Neuron_Collections stores all generated collections.
+var Neuron_Collections = []db.Collection{
+{{range $collection := .Collections -}}
+    {{$collection.Collection.VariableName}},
+{{end -}}
 }
-{{template "collection-initializer-function" . }}
 
 {{range $collection := .Collections }}
 {{template "collection-definition" $collection}}

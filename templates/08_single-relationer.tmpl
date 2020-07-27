@@ -8,6 +8,10 @@ func ({{.Receiver}} *{{.Name}}) GetRelationModel(relation *mapping.StructField) 
     switch relation.Index[0] {
     {{range $relation := .Relations -}}{{if not $relation.IsSlice -}}
     case {{$relation.Index}}: // {{$relation.Name}}
+        {{if $relation.IsPointer -}}
+        if {{$out.Receiver}}.{{$relation.Name}} == nil {
+            return nil, nil
+        }{{- end}}
         return {{if not $relation.IsPointer -}}&{{end}}{{$out.Receiver}}.{{$relation.Name}}, nil
     {{end -}}{{end -}}
     default:

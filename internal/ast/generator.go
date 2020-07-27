@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"unicode"
 
@@ -138,7 +139,11 @@ func (g *ModelGenerator) ExtractPackages() error {
 				switch d := decl.(type) {
 				case *ast.GenDecl:
 					if d.Tok == token.TYPE {
-						for _, model := range g.extractFileModels(d, file, pkg) {
+						models, err := g.extractFileModels(d, file, pkg)
+						if err != nil {
+							return err
+						}
+						for _, model := range models {
 							g.modelsFiles[model] = filepath.Join(pkg.PkgPath, file.Name.Name)
 							model.PackageName = pkg.Name
 							// Check if this is a test package.
@@ -255,7 +260,6 @@ func (g *ModelGenerator) extractMethods(pkgName string, dt *ast.FuncDecl) {
 				continue
 			}
 			typeName = ident.Name
-			fmt.Printf("Star Expr: %s\n", typeName)
 			break
 		case *ast.Ident:
 			typeName = t.Name
@@ -285,7 +289,7 @@ func (g *ModelGenerator) extractMethods(pkgName string, dt *ast.FuncDecl) {
 			method.ReturnTypes = append(method.ReturnTypes, fieldTypeName(r.Type))
 		}
 	}
-	fmt.Printf("Extracted method: %#v for type: '%s'\n", method, typeName)
+	// fmt.Printf("Extracted method: %#v for type: '%s'\n", method, typeName)
 	g.typeMethods[typeName] = append(g.typeMethods[typeName], method)
 }
 
@@ -347,13 +351,18 @@ func isExprElemPointer(expr ast.Expr) bool {
 	return false
 }
 
-func (g *ModelGenerator) setModelField(astField *ast.Field, inputField *input.Field, imported bool) {
+func (g *ModelGenerator) setModelField(astField *ast.Field, inputField *input.Field, imported bool) (err error) {
 	isBS, isBSWrapped := isByteSliceWrapper(astField.Type)
 	inputField.IsByteSlice = isBS
 	inputField.Sortable = isSortable(astField)
 	inputField.IsSlice = isMany(astField.Type)
 	if inputField.IsSlice {
-		inputField.ArraySize = getArraySize(astField.Type)
+		if as := getArraySize(astField.Type); as != "" {
+			inputField.ArraySize, err = strconv.Atoi(as)
+			if err != nil {
+				return err
+			}
+		}
 	}
 	inputField.IsString = isDeepString(astField.Type)
 	inputField.IsPointer = isPointer(astField)
@@ -368,6 +377,7 @@ func (g *ModelGenerator) setModelField(astField *ast.Field, inputField *input.Fi
 	} else if !isBS {
 		inputField.WrappedTypes = getFieldWrappedTypes(astField)
 	}
+	return err
 }
 
 type fieldTag struct {
@@ -717,6 +727,17 @@ func getWrappedTypes(expr ast.Expr) []string {
 	case *ast.SelectorExpr:
 		return getWrappedSelector(x)
 	// TODO: add case *ast.ArrayType
+	case *ast.ArrayType:
+		tp := "["
+		if bl, ok := x.Len.(*ast.BasicLit); ok {
+			tp += bl.Value
+		}
+		tp += "]"
+		tps := getWrappedTypes(x.Elt)
+		for i := range tps {
+			tps[i] = tp + tps[i]
+		}
+		return tps
 	default:
 		return []string{}
 	}

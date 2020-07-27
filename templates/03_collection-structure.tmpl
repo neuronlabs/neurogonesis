@@ -1,14 +1,15 @@
 {{define "collection-structure" -}}
 
 // {{.Collection.VariableName}} is the collection used to query {{.Model.Name}} model.
-var {{.Collection.VariableName}} *{{.Collection.Name}}
+var {{.Collection.VariableName}} = &{{.Collection.Name}}{}
 
 type {{.Collection.Name}} struct {
     Model *mapping.ModelStruct
 }
 
-func initialize{{.Collection.VariableName}}({{if .ExternalController}}c *controller.Controller{{end}}) error {
-    mStruct, err := {{if .ExternalController}}c{{else}}controller{{end}}.ModelStruct(&{{.Model.Name}}{})
+// InitializeCollection implements db.Collection interface.
+func ({{.Collection.Receiver}} *{{.Collection.Name}}) InitializeCollection(c *controller.Controller) error {
+    mStruct, err := c.ModelStruct(&{{.Model.Name}}{})
     if err != nil {
         return err
     }
@@ -17,7 +18,7 @@ func initialize{{.Collection.VariableName}}({{if .ExternalController}}c *control
 }
 
 // Query creates the query for the {{.Model.Name}}.
-func ({{.Collection.Receiver}} *{{.Collection.Name}}) Query(db orm.DB, models ...*{{.Model.Name}}) *{{.Collection.QueryBuilder}} {
+func ({{.Collection.Receiver}} *{{.Collection.Name}}) Query(db db.DB, models ...*{{.Model.Name}}) *{{.Collection.QueryBuilder}} {
     var queryModels []mapping.Model
     if len(models) > 0 {
         queryModels = make([]mapping.Model, len(models))
@@ -30,7 +31,7 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) Query(db orm.DB, models ..
 }
 
 // QueryCtx creates the query for the {{.Model.Name}} with provided 'ctx' context.
-func ({{.Collection.Receiver}} *{{.Collection.Name}}) QueryCtx(ctx context.Context, db orm.DB, models ...*{{.Model.Name}}) *{{.Collection.QueryBuilder}} {
+func ({{.Collection.Receiver}} *{{.Collection.Name}}) QueryCtx(ctx context.Context, db db.DB, models ...*{{.Model.Name}}) *{{.Collection.QueryBuilder}} {
     var queryModels []mapping.Model
     if len(models) > 0 {
         queryModels = make([]mapping.Model, len(models))

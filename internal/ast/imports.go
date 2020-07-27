@@ -38,7 +38,7 @@ func (g *ModelGenerator) parseImportPackages() error {
 		return errors.New("error while loading import packages")
 	}
 	for _, pkg := range pkgs {
-		fmt.Printf("Imported package: %s\n", pkg.Name)
+		// fmt.Printf("Imported package: %s\n", pkg.Name)
 		importTypes := g.importFields[pkg.ID]
 		for _, file := range pkg.Syntax {
 			for _, decl := range file.Decls {
@@ -83,7 +83,9 @@ func (g *ModelGenerator) parseImportPackages() error {
 				model.Relations = append(model.Relations, importedField.Field)
 				continue
 			}
-			g.setModelField(importedField.AstField, importedField.Field, true)
+			if err = g.setModelField(importedField.AstField, importedField.Field, true); err != nil {
+				return err
+			}
 			model.Fields = append(model.Fields, importedField.Field)
 		}
 

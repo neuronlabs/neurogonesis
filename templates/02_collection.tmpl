@@ -7,9 +7,5 @@ package {{.PackageName}}
 
 {{template "imports" .}}
 
-func init() {
-{{template "collection-initializer" .}}
-}
-
 {{template "collection-definition" .}}
 {{- end}}

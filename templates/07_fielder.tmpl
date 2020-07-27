@@ -18,7 +18,8 @@ func ({{.Receiver}} *{{.Name}}) GetFieldZeroValue(field *mapping.StructField) (i
     switch field.Index[0] {
     {{range $field := .Fields -}}
     case {{$field.Index}}: // {{$field.Name}}
-        return {{if eq $field.Zero "nil"}}{{if $field.IsPointer}}({{end}}{{$field.Type}}{{if $field.IsPointer}}){{end}}({{end}}{{$field.Zero}}{{if eq $field.Zero "nil"}}){{end}}, nil
+        {{/*        return {{if eq $field.Zero "nil"}}{{if $field.IsPointer}}({{end}}{{$field.Type}}{{if $field.IsPointer}}){{end}}({{end}}{{$field.Zero}}{{if eq $field.Zero "nil"}}){{end}}, nil*/ -}}
+        return {{$field.Zero}}, nil
     {{end -}}
     default:
         return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field name: '%s'", field.Name())
@@ -55,7 +56,7 @@ func ({{.Receiver}} *{{.Name}}) GetHashableFieldValue(field *mapping.StructField
     case {{$field.Index}}: // {{$field.Name}}
         {{if $field.IsPointer -}}
         if {{$out.Receiver}}.{{$field.Name}} == nil {
-            return {{$out.Receiver}}.{{$field.Name}}, nil
+            return nil, nil
         }
         {{end -}}
         {{if $field.IsByteSlice -}}
@@ -82,7 +83,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
     switch field.Index[0] {
     {{range $field := .Fields -}}
     case {{$field.Index}}: // {{$field.Name}}
-        {{if or $field.IsPointer (and $field.IsSlice (not $field.ArraySize)) -}}
+        {{if or $field.IsPointer (and $field.IsSlice (eq $field.ArraySize 0)) -}}
         if value == nil {
             {{$out.Receiver}}.{{$field.Name}} = nil
             return nil
@@ -99,7 +100,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
         }{{end}}
         {{if $field.IsSlice -}}
         if generic, ok := value.([]interface{}); ok {
-            {{if not $field.ArraySize -}}
+            {{if eq $field.ArraySize 0 -}}
             for _, item := range generic {
             {{- else -}}
             if len(generic) > {{$field.ArraySize}} {
@@ -107,8 +108,12 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
             }
             for i, item := range generic {
             {{- end}}
+                {{if not (isFieldWrappedSlice $field) -}}
                 if v, ok := item.({{$field.BaseType}}); ok {
-                    {{if not $field.ArraySize -}}
+                {{- else -}}
+                if v, ok := item.({{fieldsWrappedTypeElem $field}}); ok {
+                {{end  -}}
+                    {{if eq $field.ArraySize 0 -}}
                     {{$out.Receiver}}.{{$field.Name}} = append({{$out.Receiver}}.{{$field.Name}}, v)
                     {{- else -}}
                     {{$out.Receiver}}.{{$field.Name}}[i] = v
@@ -180,8 +185,8 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
             {{$out.Receiver}}.{{$field.Name}} = {{$field.BaseType}}(v)
             {{end -}}
             return nil
-        }{{end}}
-        {{end -}}
+        }
+        {{end}}{{end -}}
         {{if not (eq (len $field.AlternateTypes) 0) -}}
         {{if eq (len $field.AlternateTypes) 1 -}}
         // Check alternate types for the {{$field.Name}}.

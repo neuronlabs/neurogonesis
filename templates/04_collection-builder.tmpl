@@ -3,7 +3,7 @@
 // {{.Collection.QueryBuilder}} is the query builder used to create and execute
 // queries for the {{.Model.Name}}model.
 type {{.Collection.QueryBuilder}} struct {
-    builder orm.Builder
+    builder db.Builder
     err error
 }
 
@@ -206,8 +206,8 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) OrderBy(fields ...
     if {{.Collection.Receiver}}.err != nil {
         return {{.Collection.Receiver}}
     }
-    var sortFields []*query.SortField
-    for _, field := range fields {
+    sortFields := make([]query.Sort, len(fields))
+    for i, field := range fields {
         if len(field) == 0 {
             {{.Collection.Receiver}}.err = errors.New(mapping.ClassInvalidModelField, "cannot set sorting order for an empty field for model: '{{.Collection.Name}}'")
             return {{.Collection.Receiver}}
@@ -222,7 +222,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) OrderBy(fields ...
             {{.Collection.Receiver}}.err = errors.Newf(mapping.ClassInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'", field)
             return {{.Collection.Receiver}}
         }
-        sortFields = append(sortFields, &query.SortField{StructField: structField, Order: order})
+        sortFields[i] = query.SortField{StructField: structField, Order: order}
     }
     {{.Collection.Receiver}}.builder.OrderBy(sortFields...)
     return {{.Collection.Receiver}}

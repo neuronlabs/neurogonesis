@@ -84,4 +84,30 @@ func ({{.Receiver}} *{{.Name}}) GetRelationLen(relation *mapping.StructField) (i
         return 0, errors.Newf(mapping.ClassInvalidRelationField, "provided invalid relation: '%s' for model: '%T'", relation, {{.Receiver}})
     }
 }
+
+// SetRelationModels implements mapping.MultiRelationer interface.
+func ({{.Receiver}} *{{.Name}}) SetRelationModels(relation *mapping.StructField, models ...mapping.Model) error {
+    switch relation.Index[0] {
+    {{range $relation := .Relations -}}{{if $relation.IsSlice -}}
+    case {{$relation.Index}}: // {{$relation.Name}}
+        temp := make([]*{{$relation.BaseType}}, len(models))
+        {{$relationName := (toLowerCamel $relation.BaseType) -}}
+        for i, model := range models {
+            {{$relationName}}, ok := model.(*{{$relation.BaseType}})
+            if !ok {
+                return errors.Newf(mapping.ClassInvalidRelationValue, "provided invalid value type: '%T'  for the field: '{{$relation.Name}}'", model)
+            }
+            temp[i] = {{$relationName}}
+        }
+        {{if $relation.IsPointer -}}
+        {{$out.Receiver}}.{{$relation.Name}} = &temp
+        {{- else -}}
+        {{$out.Receiver}}.{{$relation.Name}} = temp
+        {{end -}}
+    {{end -}}{{end -}}
+    default:
+        return errors.Newf(mapping.ClassInvalidRelationField, "provided invalid relation: '%s' for the model '{{.Name}}'", relation.String())
+    }
+    return nil
+}
 {{end}}

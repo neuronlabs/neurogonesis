@@ -34,7 +34,7 @@ func (g *ModelGenerator) setFieldStringGetter(model *input.Model, field *input.F
 			if method.Name == "MarshalText" && len(method.ParameterTypes) == 0 && len(method.ReturnTypes) == 2 &&
 				method.ReturnTypes[0] == "[]byte" && method.ReturnTypes[1] == "error" {
 				field.IsTextMarshaler = true
-				fmt.Printf("Model: '%s' Field: '%s' StringGetter: 'TextMarshaler'\n", model.Name, field.Name)
+				// fmt.Printf("Model: '%s' Field: '%s' StringGetter: 'TextMarshaler'\n", model.Name, field.Name)
 				return nil
 			}
 		}
@@ -43,7 +43,7 @@ func (g *ModelGenerator) setFieldStringGetter(model *input.Model, field *input.F
 			if method.Name == "String" && len(method.ParameterTypes) == 0 && len(method.ReturnTypes) == 1 &&
 				method.ReturnTypes[0] == "string" {
 				field.StringGetter = tempfuncs.StringerFInterface
-				fmt.Printf("Model: '%s' Field: '%s' StringGetter: 'Stringer'\n", model.Name, field.Name)
+				// fmt.Printf("Model: '%s' Field: '%s' StringGetter: 'Stringer'\n", model.Name, field.Name)
 				return nil
 			}
 		}
@@ -70,7 +70,7 @@ func (g *ModelGenerator) setFieldStringGetter(model *input.Model, field *input.F
 	if !ok {
 		return fmt.Errorf("stringer function: '%s' not found", stringGetter)
 	}
-	fmt.Printf("Model: '%s' Field: '%s' StringGetter: '%s'\n", model.Name, field.Name, stringGetter)
+	// fmt.Printf("Model: '%s' Field: '%s' StringGetter: '%s'\n", model.Name, field.Name, stringGetter)
 
 	field.StringGetter = stringGetter
 	return nil
@@ -163,7 +163,7 @@ func (g *ModelGenerator) setFieldStringParserFunctions(model *input.Model) error
 }
 
 func (g *ModelGenerator) setFieldStringParser(model *input.Model, field *input.Field) error {
-	fmt.Printf("Model: '%s' Field: '%s' setting string parser\n", model.Name, field.Name)
+	// fmt.Printf("Model: '%s' Field: '%s' setting string parser\n", model.Name, field.Name)
 	if !isTypeBasic(field.Ast.Type) {
 		fieldType := field.Type
 		if i := strings.IndexRune(fieldType, '*'); i != -1 {
@@ -177,7 +177,7 @@ func (g *ModelGenerator) setFieldStringParser(model *input.Model, field *input.F
 			if method.Name == "UnmarshalText" {
 				if len(method.ParameterTypes) == 1 && method.ParameterTypes[0] == "[]byte" && len(method.ReturnTypes) == 1 && method.ReturnTypes[0] == "error" {
 					field.IsTextUnmarshaler = true
-					fmt.Printf("Field: '%s' StringParser TextUnmarshaler'\n", field.Name)
+					// fmt.Printf("Field: '%s' StringParser TextUnmarshaler'\n", field.Name)
 					return nil
 				}
 			}
@@ -195,7 +195,7 @@ func (g *ModelGenerator) setFieldStringParser(model *input.Model, field *input.F
 	} else {
 		stringParser, err = g.getAttributeStringParserFunction(field.Ast.Type)
 		if err != nil {
-			fmt.Printf("[WARNING] Model's: '%s' field '%s' don't have string parser function.\n", model.Name, field.Name)
+			// fmt.Printf("[WARNING] Model's: '%s' field '%s' don't have string parser function.\n", model.Name, field.Name)
 			return nil
 		}
 	}
@@ -207,7 +207,7 @@ func (g *ModelGenerator) setFieldStringParser(model *input.Model, field *input.F
 	if !ok {
 		return fmt.Errorf("string parser function: '%s' not found", stringParser)
 	}
-	fmt.Printf("Field: '%s' StringParser '%s'\n", field.Name, stringParser)
+	// fmt.Printf("Field: '%s' StringParser '%s'\n", field.Name, stringParser)
 	field.StringSetter = stringParser
 	return nil
 }

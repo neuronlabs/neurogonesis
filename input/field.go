@@ -19,7 +19,7 @@ type Field struct {
 	Scanner, Sortable, ZeroChecker                 bool
 	Tags                                           string
 	IsPointer, IsElemPointer, IsSlice, IsByteSlice bool
-	ArraySize                                      string
+	ArraySize                                      int
 	// Selector is the import package name for given field
 	// i.e.:
 	// 	for field - time.Time - the Type would be 'Time' and Selector 'time'.

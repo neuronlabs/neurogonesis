@@ -64,7 +64,7 @@ func ParseFloat64(name string) string {
 
 // ParseFloat32 gets the float32 parser function.
 func ParseFloat32(name string) string {
-	return "strconv.ParseFloat(float64(" + name + "), 64)"
+	return "strconv.ParseFloat(" + name + ", 64)"
 }
 
 const (

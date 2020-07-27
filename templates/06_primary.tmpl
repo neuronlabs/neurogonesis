@@ -77,11 +77,11 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyValue(value interface{}) error {
         return nil
     {{end -}}{{range $wrapped := .Primary.WrappedTypes -}}
     } else if v, ok := value.({{$wrapped}}); ok {
-        {{if .Primary.IsPointer -}}
-        temp := {{slice .Primary.Type 1}}(v)
-        {{$out.Receiver}}.{{.Primary.Name}} = &temp
+        {{if $out.Primary.IsPointer -}}
+        temp := {{slice $out.Primary.Type 1}}(v)
+        {{$out.Receiver}}.{{$out.Primary.Name}} = &temp
         {{else -}}
-        {{$out.Receiver}}.{{.Primary.Name}} = {{.Primary.BaseType}}(v)
+        {{$out.Receiver}}.{{$out.Primary.Name}} = {{$out.Primary.BaseType}}(v)
         {{end -}}
     {{end -}}
     }
