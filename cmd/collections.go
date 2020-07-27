@@ -117,11 +117,6 @@ func generateCollections(cmd *cobra.Command, args []string) {
 
 	var modelNames []string
 	if !singleFile {
-		if !g.HasCollectionInitializer() {
-			fileName := filepath.Join(dir, "initialize_collections.neuron.go")
-			generateFile(fileName, "initialize_collections", buf, g.CollectionInitializer(externalController))
-		}
-
 		for _, collection := range g.Collections("") {
 			// Create new file if not exists.
 			fileName := filepath.Join(dir, strcase.ToSnake(collection.Model.Name)+"_collection.neuron")

@@ -1,5 +1,9 @@
 package input
 
+import (
+	"strings"
+)
+
 // Imports is the wrapper over the string slice that allows to add exclusive and sort given import packages.
 type Imports []string
 
@@ -58,7 +62,10 @@ type Collection struct {
 
 // Receiver gets the first letter from the collection name - used as the function receiver.
 func (c Collection) Receiver() string {
-	return c.Name[:1]
+	if c.Name[0] == '_' {
+		return strings.ToLower(c.Name[1:2])
+	}
+	return strings.ToLower(c.Name[:1])
 }
 
 // ZeroChecker is the interface that allows to check if the value is zero.

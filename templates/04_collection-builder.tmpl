@@ -105,7 +105,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) DeleteAll() (int64
 
 
 // Filter adds the 'filter' to the given query.
-func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) Filter(filter *query.FilterField) (*{{.Collection.QueryBuilder}}) {
+func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) Filter(filter filter.Filter) (*{{.Collection.QueryBuilder}}) {
     if {{.Collection.Receiver}}.err != nil {
        return {{.Collection.Receiver}}
     }
@@ -222,7 +222,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) OrderBy(fields ...
             {{.Collection.Receiver}}.err = errors.Newf(mapping.ClassInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'", field)
             return {{.Collection.Receiver}}
         }
-        sortFields[i] = query.SortField{StructField: structField, Order: order}
+        sortFields[i] = query.SortField{StructField: structField, SortOrder: order}
     }
     {{.Collection.Receiver}}.builder.OrderBy(sortFields...)
     return {{.Collection.Receiver}}

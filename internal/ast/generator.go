@@ -9,6 +9,7 @@ import (
 	"path"
 	"path/filepath"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"unicode"
@@ -217,6 +218,10 @@ func (g *ModelGenerator) Models() (models []*input.Model) {
 	for model := range g.modelsFiles {
 		models = append(models, model)
 	}
+	// Sort the results by model name.
+	sort.Slice(models, func(i, j int) bool {
+		return models[i].Name < models[j].Name
+	})
 	return models
 }
 
