@@ -40,7 +40,7 @@ func (m *Model) AddImport(imp string) {
 func (m *Model) Collection() *Collection {
 	return &Collection{
 		Name:         "_" + strcase.ToCamel(inflection.Plural(m.Name)),
-		VariableName: strcase.ToCamel(inflection.Plural(m.Name)),
+		VariableName: "NRN_" + strcase.ToCamel(inflection.Plural(m.Name)),
 		QueryBuilder: strcase.ToLowerCamel(inflection.Plural(m.Name) + "QueryBuilder"),
 	}
 }

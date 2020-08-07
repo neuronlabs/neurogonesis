@@ -62,10 +62,14 @@ type Collection struct {
 
 // Receiver gets the first letter from the collection name - used as the function receiver.
 func (c Collection) Receiver() string {
-	if c.Name[0] == '_' {
-		return strings.ToLower(c.Name[1:2])
+	name := c.Name
+	if strings.HasPrefix(c.Name, "NRN") {
+		name = c.Name[3:]
 	}
-	return strings.ToLower(c.Name[:1])
+	if name[0] == '_' {
+		return strings.ToLower(name[1:2])
+	}
+	return strings.ToLower(name[:1])
 }
 
 // ZeroChecker is the interface that allows to check if the value is zero.

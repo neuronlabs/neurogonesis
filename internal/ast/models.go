@@ -104,13 +104,16 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 			}
 		}
 
-		if isFieldRelation(structField) {
+		fmt.Printf("Model: '%s' Field: '%s' ", modelName, field.Name)
+		if g.isFieldRelation(structField) {
+			fmt.Println("is relation")
 			field.IsSlice = isMany(structField.Type)
 			field.IsElemPointer = isElemPointer(structField)
 			field.IsPointer = isPointer(structField)
 			model.Relations = append(model.Relations, &field)
 			continue
 		} else if importedField := g.isImported(file, structField); importedField != nil {
+			fmt.Println("is imported")
 			importedField.Field = &field
 			importedField.AstField = structField
 			if isPrimary(structField) {
@@ -119,6 +122,7 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 			g.modelImportedFields[model] = append(g.modelImportedFields[model], importedField)
 			continue
 		}
+		fmt.Printf("is ")
 		fieldPtr := &field
 		if err := g.setModelField(structField, fieldPtr, false); err != nil {
 			return nil, err
@@ -126,7 +130,9 @@ func (g *ModelGenerator) extractModel(file *ast.File, structType *ast.StructType
 		// Check if field is a primary key field.
 		if isPrimary(structField) {
 			model.Primary = fieldPtr
+			fmt.Printf("primary ")
 		}
+		fmt.Println("field")
 		model.Fields = append(model.Fields, fieldPtr)
 	}
 

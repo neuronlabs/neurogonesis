@@ -53,6 +53,7 @@ func NewModelGenerator(namingConvention string, types, tags, exclude []string) *
 		Tags:                tags,
 		importFields:        map[string]map[string][]*ast.Ident{},
 		imports:             map[string]string{},
+		loadedTypes:         map[string]*ast.TypeSpec{},
 		modelImportedFields: map[*input.Model][]*importField{},
 		typeMethods:         map[string][]*Method{},
 	}
@@ -76,6 +77,7 @@ type ModelGenerator struct {
 	Tags                []string
 	Types               []string
 	Exclude             []string
+	loadedTypes         map[string]*ast.TypeSpec
 	imports             map[string]string
 	importFields        map[string]map[string][]*ast.Ident
 	models              map[string]*input.Model
@@ -133,7 +135,30 @@ func (g *ModelGenerator) CollectionInitializer(externalController bool) *input.C
 
 // ExtractPackages extracts all models for provided in the packages.
 func (g *ModelGenerator) ExtractPackages() error {
-	// Find all struct Types that might be potential models
+	// Find all Types that might be potential models
+	for _, pkg := range g.pkgs {
+		for _, file := range pkg.Syntax {
+			for _, decl := range file.Decls {
+				genDecl, isGenDecl := decl.(*ast.GenDecl)
+				if !isGenDecl {
+					continue
+				}
+				if genDecl.Tok != token.TYPE {
+					continue
+				}
+				for _, spec := range genDecl.Specs {
+					switch st := spec.(type) {
+					case *ast.TypeSpec:
+						if st.Name == nil {
+							continue
+						}
+						g.loadedTypes[st.Name.Name] = st
+					}
+				}
+			}
+		}
+	}
+
 	for _, pkg := range g.pkgs {
 		for _, file := range pkg.Syntax {
 			for _, decl := range file.Decls {
@@ -509,8 +534,26 @@ func isPrimary(field *ast.Field) bool {
 	return false
 }
 
-func isFieldRelation(field *ast.Field) bool {
-	return isRelation(field.Type)
+func (g *ModelGenerator) isFieldRelation(field *ast.Field) bool {
+	if field.Tag != nil {
+		tags := extractTags(field.Tag.Value, "neuron", ";", ",")
+
+		for _, tag := range tags {
+			if tag.key == "-" {
+				return false
+			}
+			if strings.EqualFold(tag.key, "type") {
+				for _, value := range tag.values {
+					switch value {
+					case "relation", "rel", "relationship":
+						return true
+					}
+				}
+				break
+			}
+		}
+	}
+	return g.isRelation(field.Type)
 }
 
 func isPointer(field *ast.Field) bool {
@@ -547,19 +590,25 @@ func isMany(expr ast.Expr) bool {
 	}
 }
 
-func isRelation(expr ast.Expr) bool {
+func (g *ModelGenerator) isRelation(expr ast.Expr) bool {
 	switch t := expr.(type) {
 	case *ast.Ident:
 		if t.Obj == nil {
-			return false
+			tp, ok := g.loadedTypes[t.Name]
+			if !ok {
+				fmt.Printf(" (obj == nil [%v] - not a relation) ", t)
+				return false
+			}
+			return g.isRelation(tp.Type)
 		}
 		ts, ok := t.Obj.Decl.(*ast.TypeSpec)
 		if !ok {
+			fmt.Printf(" (obj.Decl is not a type spec: %T) ", t.Obj.Decl)
 			return false
 		}
-		return isRelation(ts.Type)
+		return g.isRelation(ts.Type)
 	case *ast.StarExpr:
-		return isRelation(t.X)
+		return g.isRelation(t.X)
 	case *ast.StructType:
 		// Search for the primary key field.
 		for _, structField := range t.Fields.List {
@@ -575,9 +624,9 @@ func isRelation(expr ast.Expr) bool {
 			}
 		}
 	case *ast.ArrayType:
-		return isRelation(t.Elt)
+		return g.isRelation(t.Elt)
 	case *ast.SelectorExpr:
-		return isRelation(t.Sel)
+		return g.isRelation(t.Sel)
 	}
 	return false
 }

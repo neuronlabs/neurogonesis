@@ -76,7 +76,8 @@ func (g *ModelGenerator) parseImportPackages() error {
 		modelImports := map[string]struct{}{}
 		for _, importedField := range importedFields {
 			modelImports[importedField.Path] = struct{}{}
-			if isFieldRelation(importedField.AstField) {
+			if g.isFieldRelation(importedField.AstField) {
+				fmt.Printf("Model: '%s' Field: '%s' is relation\n", model.Name, importedField.Field.Name)
 				importedField.Field.IsSlice = isMany(importedField.AstField.Type)
 				importedField.Field.IsElemPointer = isElemPointer(importedField.AstField)
 				importedField.Field.IsPointer = isPointer(importedField.AstField)

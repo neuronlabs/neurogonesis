@@ -148,4 +148,18 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyStringValue(value string) error {
     {{- else -}}
     return errors.New(mapping.ClassModelDefinition, "model '{{.Name}}' has invalid primary key field type to parse string.")
     {{- end}}
-}{{end}}
+}
+
+// SetFrom implements FromSetter interface.
+func ({{.Receiver}} *{{.Name}}) SetFrom(model mapping.Model) error {
+    if model == nil {
+        return errors.New(query.ClassInvalidInput, "provided nil model to set from")
+    }
+    from, ok := model.(*{{.Name}})
+    if !ok {
+        return errors.NewDetf(mapping.ClassModelNotMatch, "provided model doesn't match the input: %T", model)
+    }
+    *{{.Receiver}} = *from
+    return nil
+}
+{{- end}}
