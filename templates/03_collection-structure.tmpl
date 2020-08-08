@@ -46,7 +46,7 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) QueryCtx(ctx context.Conte
 // Insert inserts {{.Model.Name}} into database.
 func ({{.Collection.Receiver}} *{{.Collection.Name}}) Insert(ctx context.Context, db database.DB, models ...*{{.Model.Name}}) error {
     if len(models) == 0 {
-        return errors.New(query.ClassNoModels, "nothing to insert")
+        return errors.Wrap(query.ErrNoModels, "nothing to insert")
     }
     queryModels := make([]mapping.Model, len(models))
     for i, model := range models {
@@ -58,7 +58,7 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) Insert(ctx context.Context
 // Update updates {{.Model.Name}} models into database.
 func ({{.Collection.Receiver}} *{{.Collection.Name}}) Update(ctx context.Context, db database.DB, models ...*{{.Model.Name}}) (int64, error) {
     if len(models) == 0 {
-        return 0, errors.New(query.ClassNoModels, "nothing to insert")
+        return 0, errors.Wrap(query.ErrNoModels, "nothing to insert")
     }
     queryModels := make([]mapping.Model, len(models))
     for i, model := range models {
@@ -70,7 +70,7 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) Update(ctx context.Context
 // Delete deletes {{.Model.Name}} models in database.
 func ({{.Collection.Receiver}} *{{.Collection.Name}}) Delete(ctx context.Context, db database.DB, models ...*{{.Model.Name}}) (int64,error) {
     if len(models) == 0 {
-        return 0, errors.New(query.ClassNoModels, "nothing to insert")
+        return 0, errors.Wrap(query.ErrNoModels, "nothing to insert")
     }
     queryModels := make([]mapping.Model, len(models))
     for i, model := range models {
@@ -83,7 +83,7 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) Delete(ctx context.Context
 func ({{.Collection.Receiver}} *{{.Collection.Name}}) Refresh(ctx context.Context, db database.DB, models ...*{{.Model.Name}}) error {
     var queryModels []mapping.Model
     if len(models) == 0 {
-        return errors.New(query.ClassNoModels, "nothing to refresh")
+        return errors.Wrap(query.ErrNoModels, "nothing to refresh")
     }
     queryModels = make([]mapping.Model, len(models))
     for i, model := range models {
@@ -100,10 +100,10 @@ func ({{.Collection.Receiver}} *{{.Collection.Name}}) Refresh(ctx context.Contex
 // Add{{$relation.Name}} adds the '{{$relation.Name}}' relationship for provided input 'models'.
 func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Add{{$relation.Name}}(ctx context.Context, db database.DB, model *{{$out.Model.Name}}, relations ...*{{$relation.BaseType}}) error {
     if model == nil {
-        return errors.New(query.ClassNoModels, "provided nil model")
+        return errors.Wrap(query.ErrNoModels, "provided nil model")
     }
     if len(relations) == 0 {
-        return errors.New(query.ClassNoModels, "no relation models provided")
+        return errors.Wrap(query.ErrNoModels, "no relation models provided")
     }
     relationField, err := {{$out.Collection.Receiver}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
@@ -116,7 +116,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Add{{$relation.Nam
     q := query.NewScope({{$out.Collection.Receiver}}.Model, model)
     relationAdder, ok := db.(database.QueryRelationAdder)
     if !ok {
-        return errors.NewDetf(query.ClassInternal, "DB doesn't implement QueryRelationAdder interface - %T", db)
+        return errors.WrapDetf(query.ErrInternal, "DB doesn't implement QueryRelationAdder interface - %T", db)
     }
     return relationAdder.QueryAddRelations(ctx, q, relationField, relationModels...)
 }
@@ -136,7 +136,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Clear{{$relation.N
     s := query.NewScope({{$out.Collection.Receiver}}.Model, modelInterfaces...)
     relationClearer, ok := db.(database.QueryRelationClearer)
     if !ok {
-        return 0, errors.NewDetf(query.ClassInternal, "DB doesn't implement QueryRelationAdder interface - %T", db)
+        return 0, errors.WrapDetf(query.ErrInternal, "DB doesn't implement QueryRelationAdder interface - %T", db)
     }
     return relationClearer.QueryClearRelations(ctx, s, relation)
 }
@@ -145,11 +145,11 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Clear{{$relation.N
 // Get{{$relation.Name}} gets the '{{$relation.Name}}' relationship for provided input 'model'.
 func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Get{{$relation.Name}}(ctx context.Context, db database.DB, model *{{$out.Model.Name}}, relationFieldset ...string) ({{if $relation.IsSlice -}}[]{{- end -}}*{{$relation.BaseType}}, error) {
     if model == nil {
-        return nil, errors.New(query.ClassNoModels, "provided nil model")
+        return nil, errors.Wrap(query.ErrNoModels, "provided nil model")
     }
     // Check if primary key has zero value.
     if model.IsPrimaryKeyZero() {
-        return nil, errors.New(mapping.ClassFieldValue, "model's: '{{$out.Model.Name}}' primary key value has zero value")
+        return nil, errors.Wrap(mapping.ErrFieldValue, "model's: '{{$out.Model.Name}}' primary key value has zero value")
     }
     relationField, err := {{$out.Collection.Receiver}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
@@ -164,7 +164,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Get{{$relation.Nam
         for _, field := range relationFieldset {
             sField, ok := relationModel.FieldByName(field)
             if !ok {
-                return nil, errors.Newf(mapping.ClassInvalidModelField, "no field: '%s' found for the model: '{{$relation.BaseType}}'", field)
+                return nil, errors.Wrapf(mapping.ErrInvalidModelField, "no field: '%s' found for the model: '{{$relation.BaseType}}'", field)
             }
             fields = append(fields, sField)
         }
@@ -196,11 +196,11 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Get{{$relation.Nam
 // Set{{$relation.Name}} sets the '{{$relation.Name}}' relationship for provided input 'models'.
 func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Set{{$relation.Name}}(ctx context.Context, db database.DB, model *{{$out.Model.Name}}, relation{{if $relation.IsSlice -}}s ...{{- else}} {{- end -}}*{{$relation.BaseType}}) error {
     if model == nil {
-        return errors.New(query.ClassNoModels, "provided nil model")
+        return errors.Wrap(query.ErrNoModels, "provided nil model")
     }
     // Check if primary key has zero value.
     if model.IsPrimaryKeyZero() {
-        return errors.New(mapping.ClassFieldValue, "model's: '{{$out.Model.Name}}' primary key value has zero value")
+        return errors.Wrap(mapping.ErrFieldValue, "model's: '{{$out.Model.Name}}' primary key value has zero value")
     }
     relationField, err := {{$out.Collection.Receiver}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
@@ -209,27 +209,27 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.Name}}) Set{{$relation.Nam
     q := query.NewScope({{$out.Collection.Receiver}}.Model, model)
     {{if not $relation.IsSlice -}}
     if relation.IsPrimaryKeyZero() {
-        return errors.New(mapping.ClassFieldValue, "relation '{{$relation.Name}}' model has zero value primary field")
+        return errors.Wrap(mapping.ErrFieldValue, "relation '{{$relation.Name}}' model has zero value primary field")
     }
     relationSetter, ok := db.(database.QueryRelationSetter)
     if !ok {
-        return errors.NewDetf(query.ClassInternal, "DB doesn't implement QueryRelationSetter interface: %T", db)
+        return errors.WrapDetf(query.ErrInternal, "DB doesn't implement QueryRelationSetter interface: %T", db)
     }
     return relationSetter.QuerySetRelations(ctx, q, relationField, relation)
     {{- else -}}
     if len(relations) == 0 {
-        return errors.New(query.ClassNoModels, "no relation models provided")
+        return errors.Wrap(query.ErrNoModels, "no relation models provided")
     }
     relationModels := make([]mapping.Model, len(relations))
     for i, relation := range relations {
         if relation.IsPrimaryKeyZero() {
-            return errors.New(mapping.ClassFieldValue, "one of relation '{{$relation.Name}}' model has zero value primary field")
+            return errors.Wrap(mapping.ErrFieldValue, "one of relation '{{$relation.Name}}' model has zero value primary field")
         }
         relationModels[i] = relation
     }
     relationSetter, ok := db.(database.QueryRelationSetter)
     if !ok {
-        return errors.NewDetf(query.ClassInternal, "DB doesn't implement QueryRelationSetter interface: %T", db)
+        return errors.WrapDetf(query.ErrInternal, "DB doesn't implement QueryRelationSetter interface: %T", db)
     }
     return relationSetter.QuerySetRelations(ctx, q, relationField, relationModels...)
     {{- end}}

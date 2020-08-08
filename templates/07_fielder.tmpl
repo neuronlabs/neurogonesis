@@ -10,7 +10,7 @@ func ({{.Receiver}} *{{.Name}}) GetFieldsAddress(field *mapping.StructField) (in
     case {{$field.Index}}: // {{$field.Name}}
         return &{{$out.Receiver}}.{{$field.Name}}, nil
     {{end -}}}
-    return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
+    return nil, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
 }
 
 // GetFieldZeroValue implements mapping.Fielder interface.s
@@ -22,7 +22,7 @@ func ({{.Receiver}} *{{.Name}}) GetFieldZeroValue(field *mapping.StructField) (i
         return {{$field.Zero}}, nil
     {{end -}}
     default:
-        return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field name: '%s'", field.Name())
+        return nil, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field name: '%s'", field.Name())
     }
 }
 
@@ -33,7 +33,7 @@ func ({{.Receiver}} *{{.Name}}) IsFieldZero(field *mapping.StructField) (bool, e
     case {{$field.Index}}: // {{$field.Name}}
         return {{$field.IsZero}}, nil
     {{end -}}}
-    return false, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field name: '%s'", field.Name())
+    return false, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field name: '%s'", field.Name())
 }
 
 // SetFieldZeroValue implements mapping.Fielder interface.s
@@ -44,7 +44,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldZeroValue(field *mapping.StructField) er
         {{$out.Receiver}}.{{$field.Name}} = {{$field.Zero}}
     {{end -}}
     default:
-        return errors.Newf(mapping.ClassInvalidModelField, "provided invalid field name: '%s'", field.Name())
+        return errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field name: '%s'", field.Name())
     }
     return nil
 }
@@ -65,7 +65,7 @@ func ({{.Receiver}} *{{.Name}}) GetHashableFieldValue(field *mapping.StructField
             return {{if $field.IsPointer}}*{{end}}{{$out.Receiver}}.{{$field.Name}}, nil
         {{- end}}
     {{end -}}}
-    return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field: '%s' for given model: '{{.Name}}'", field.Name())
+    return nil, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field: '%s' for given model: '{{.Name}}'", field.Name())
 }
 
 // GetFieldValue implements mapping.Fielder interface.
@@ -75,7 +75,7 @@ func ({{.Receiver}} *{{.Name}}) GetFieldValue(field *mapping.StructField) (inter
     case {{$field.Index}}: // {{$field.Name}}
         return {{$out.Receiver}}.{{$field.Name}}, nil
     {{end -}}}
-    return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
+    return nil, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
 }
 
 // SetFieldValue implements mapping.Fielder interface.
@@ -104,7 +104,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
             for _, item := range generic {
             {{- else -}}
             if len(generic) > {{$field.ArraySize}} {
-                return errors.Newf(mapping.ClassFieldValue, "provided too many values for the field: '{{$field.Name}}")
+                return errors.Wrapf(mapping.ErrFieldValue, "provided too many values for the field: '{{$field.Name}}")
             }
             for i, item := range generic {
             {{- end}}
@@ -141,7 +141,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
                     {{- end}}
                     continue
                 }
-                return errors.Newf(mapping.ClassFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
+                return errors.Wrapf(mapping.ErrFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
                 {{- else -}}
                 switch v := item.(type) {
                 {{range $alternateType := $alternateTypes -}}
@@ -169,7 +169,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
                     {{- end}}
                 {{- end}}
                 {{end -}}default:
-                    return errors.Newf(mapping.ClassFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
+                    return errors.Wrapf(mapping.ErrFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
                 }{{- end}}{{end}}
             }
             return nil
@@ -199,7 +199,7 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
             {{- end}}
             return nil
         }
-        return errors.Newf(mapping.ClassFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
+        return errors.Wrapf(mapping.ErrFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
         {{- else -}}
         switch v := value.(type) {
         {{range $alternateType := $field.AlternateTypes -}}
@@ -215,17 +215,17 @@ func ({{.Receiver}} *{{.Name}}) SetFieldValue(field *mapping.StructField, value 
             {{$out.Receiver}}.{{$field.Name}} = &temp
         {{- end}}
         {{end -}}default:
-            return errors.Newf(mapping.ClassFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
+            return errors.Wrapf(mapping.ErrFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
         }
         return nil
         {{- end}}
         {{- /* TODO: set the scanner as switch type case*/ -}}
         {{ else -}}
-            return errors.Newf(mapping.ClassFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
+            return errors.Wrapf(mapping.ErrFieldValue, "provided invalid field type: '%T' for the field: %s", value, field.Name())
         {{- end}}
     {{end -}}
     default:
-        return errors.Newf(mapping.ClassInvalidModelField, "provided invalid field: '%s' for the model: '{{$out.Name}}'", field.Name())
+        return errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field: '%s' for the model: '{{$out.Name}}'", field.Name())
     }
 }
 
@@ -244,11 +244,11 @@ func ({{.Receiver}} *{{.Name}}) ParseFieldsStringValue(field *mapping.StructFiel
         temp := {{$out.Receiver}}.{{$field.Name}}
         {{- end}}
         if err := {{if $field.IsPointer -}}temp{{- else -}}{{$out.Receiver}}.{{$field.Name}}{{- end}}.UnmarshalText([]byte(value)); err != nil {
-            return "", errors.Newf(mapping.ClassFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
+            return "", errors.Wrapf(mapping.ErrFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
         }
         bt, err := {{if $field.IsPointer -}}temp{{- else -}}{{$out.Receiver}}.{{$field.Name}}{{- end}}.MarshalText()
         if err != nil {
-            return "", errors.Newf(mapping.ClassFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
+            return "", errors.Wrapf(mapping.ErrFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
         }
         {{if not $field.IsPointer -}}
         {{$out.Receiver}}.{{$field.Name}} = temp
@@ -262,7 +262,7 @@ func ({{.Receiver}} *{{.Name}}) ParseFieldsStringValue(field *mapping.StructFiel
         temp := {{$out.Receiver}}.{{$field.Name}}
         {{- end}}
         if err := {{if $field.IsPointer -}}temp{{- else -}}{{$out.Receiver}}.{{$field.Name}}{{- end}}.UnmarshalText([]byte(value)); err != nil {
-            return "", errors.Newf(mapping.ClassFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
+            return "", errors.Wrapf(mapping.ErrFieldValue, "invalid field '{{$field.Name}}' value: '%v' to parse string. Err: %v", {{$out.Receiver}}.{{$field.Name}}, err)
         }
         {{if $field.IsPointer -}}
         return {{stringer "temp" $field.StringSetter}}, nil
@@ -274,9 +274,9 @@ func ({{.Receiver}} *{{.Name}}) ParseFieldsStringValue(field *mapping.StructFiel
         {{- else if $field.IsString -}}
         return value, nil
         {{- else -}}
-        return "", errors.New(mapping.ClassFieldNotParser, "field '{{$field.Name}}' doesn't have string setter.")
+        return "", errors.Wrap(mapping.ErrFieldNotParser, "field '{{$field.Name}}' doesn't have string setter.")
         {{- end}}
     {{end -}}}
-    return nil, errors.Newf(mapping.ClassInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
+    return nil, errors.Wrapf(mapping.ErrInvalidModelField, "provided invalid field: '%s' for given model: {{.Name}}'", field.Name())
 }
 {{- end}}

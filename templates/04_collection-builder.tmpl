@@ -75,7 +75,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) Refresh() error {
 }
 
 // Get returns single {{.Model.Name}} model that matches given query.
-// If the model is not found the function returns error of class.QueryValueNoResult.
+// If the model is not found the function returns error of query.ErrQueryNoResult.
 func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) Get() (*{{.Model.Name}}, error) {
     if {{.Collection.Receiver}}.err != nil {
         return nil, {{.Collection.Receiver}}.err
@@ -123,7 +123,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.QueryBuilder}}) Include{{$
     }
     relation, err := {{$out.Collection.VariableName}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
-        {{$out.Collection.Receiver}}.err =  errors.Newf(mapping.ClassInternal, "Getting '{{$relation.Name}}' by index for model '{{$out.Model.Name}}' failed: %v", err)
+        {{$out.Collection.Receiver}}.err =  errors.Wrapf(mapping.ErrInternal, "Getting '{{$relation.Name}}' by index for model '{{$out.Model.Name}}' failed: %v", err)
         return {{$out.Collection.Receiver}}
     }
     // check the fieldset for the relation.
@@ -131,7 +131,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.QueryBuilder}}) Include{{$
     for _, field := range {{toLowerCamel $relation.Name}}Fieldset {
         structField, ok := relation.ModelStruct().FieldByName(field)
         if !ok {
-            {{$out.Collection.Receiver}}.err = errors.Newf(mapping.ClassInvalidModelField, "field: '%s' is not found for the '{{$relation.BaseType}}' model", field)
+            {{$out.Collection.Receiver}}.err = errors.Wrapf(mapping.ErrInvalidModelField, "field: '%s' is not found for the '{{$relation.BaseType}}' model", field)
             return {{$out.Collection.Receiver}}
         }
         relationFields = append(relationFields, structField)
@@ -176,7 +176,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) Select(fields ...s
     for _, field := range fields {
         structField, ok := {{.Collection.VariableName}}.Model.FieldByName(field)
         if !ok {
-            {{.Collection.Receiver}}.err = errors.Newf(mapping.ClassInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'",field)
+            {{.Collection.Receiver}}.err = errors.Wrapf(mapping.ErrInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'",field)
             return {{.Collection.Receiver}}
         }
         fieldSet = append(fieldSet, structField)
@@ -200,7 +200,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) OrderBy(fields ...
     sortFields := make([]query.Sort, len(fields))
     for i, field := range fields {
         if len(field) == 0 {
-            {{.Collection.Receiver}}.err = errors.New(mapping.ClassInvalidModelField, "cannot set sorting order for an empty field for model: '{{.Collection.Name}}'")
+            {{.Collection.Receiver}}.err = errors.Wrap(mapping.ErrInvalidModelField, "cannot set sorting order for an empty field for model: '{{.Collection.Name}}'")
             return {{.Collection.Receiver}}
         }
         var order query.SortOrder
@@ -210,7 +210,7 @@ func ({{.Collection.Receiver}} *{{.Collection.QueryBuilder}}) OrderBy(fields ...
         }
         structField, ok := {{.Collection.VariableName}}.Model.FieldByName(field)
         if !ok {
-            {{.Collection.Receiver}}.err = errors.Newf(mapping.ClassInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'", field)
+            {{.Collection.Receiver}}.err = errors.Wrapf(mapping.ErrInvalidModelField, "field: '%s' is not valid for model: '{{.Collection.Name}}'", field)
             return {{.Collection.Receiver}}
         }
         sortFields[i] = query.SortField{StructField: structField, SortOrder: order}
@@ -229,7 +229,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.QueryBuilder}}) Add{{$rela
     }
     relation, err := {{$out.Collection.VariableName}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
-        return errors.Newf(mapping.ClassInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
+        return errors.Wrapf(mapping.ErrInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
     }
     {{if not $relation.IsSlice -}}
     return {{$out.Collection.Receiver}}.builder.AddRelations(relation, {{$relationSelector}})
@@ -253,7 +253,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.QueryBuilder}}) Set{{$rela
     }
     relation, err := {{$out.Collection.VariableName}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
-        return errors.Newf(mapping.ClassInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
+        return errors.Wrapf(mapping.ErrInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
     }
     {{if not $relation.IsSlice -}}
     return {{$out.Collection.Receiver}}.builder.SetRelations(relation, {{$relationSelector}})
@@ -276,7 +276,7 @@ func ({{$out.Collection.Receiver}} *{{$out.Collection.QueryBuilder}}) Remove{{$r
     }
     relation, err := {{$out.Collection.VariableName}}.Model.RelationByIndex({{$relation.Index}})
     if err != nil {
-        return 0, errors.Newf(mapping.ClassInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
+        return 0, errors.Wrapf(mapping.ErrInternal, "getting '{{$relation.Name}}' relation by index for model '{{$out.Model.Name}}' failed: %v", err)
     }
     return {{$out.Collection.Receiver}}.builder.RemoveRelations(relation)
 }

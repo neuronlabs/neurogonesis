@@ -26,13 +26,13 @@ func ({{.Receiver}} *{{.Name}}) GetPrimaryKeyStringValue() (string, error) {
     {{- else if .Primary.IsTextMarshaler -}}
     id, err := {{.Receiver}}.{{.Primary.Name}}.MarshalText()
     if err != nil {
-        return "", errors.Newf(mapping.ClassFieldValue, "invalid primary field value: %v to parse string. Err: %v", {{.Receiver}}.{{.Primary.Name}}, err)
+        return "", errors.Wrapf(mapping.ErrFieldValue, "invalid primary field value: %v to parse string. Err: %v", {{.Receiver}}.{{.Primary.Name}}, err)
     }
     return string(id), nil
     {{- else if .Primary.IsString -}}
     return {{.Receiver}}.{{.Primary.Name}}.String(), nil
     {{- else -}}
-    return "", errors.New(mapping.ClassModelDefinition, "model '{{.Name}}' has invalid primary key field type to parse string.")
+    return "", errors.Wrap(mapping.ErrModelDefinition, "model '{{.Name}}' has invalid primary key field type to parse string.")
     {{- end}}
 }
 
@@ -100,7 +100,7 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyValue(value interface{}) error {
     {{end -}}{{if .Primary.Scanner -}}
         return {{.Receiver}}.{{.Primary.Name}}.Scan(value)
     {{else -}}
-        return errors.Newf(mapping.ClassFieldValue, "provided invalid value: '%T' for the primary field for model: '%T'",
+        return errors.Wrapf(mapping.ErrFieldValue, "provided invalid value: '%T' for the primary field for model: '%T'",
         value, {{.Receiver}}){{end}}
     {{- else -}}
     // Check alternate types for given field.
@@ -114,7 +114,7 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyValue(value interface{}) error {
         {{$out.Receiver}}.{{$out.Primary.Name}} = {{$out.Primary.Type}}(valueType)
         {{- end}}
     {{end -}}default:
-        return errors.Newf(mapping.ClassFieldValue, "provided invalid value: '%T' for the primary field for model: '{{.Name}}'", value)
+        return errors.Wrapf(mapping.ErrFieldValue, "provided invalid value: '%T' for the primary field for model: '{{.Name}}'", value)
     }
     return nil{{end}}
 }
@@ -134,7 +134,7 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyStringValue(value string) error {
     return nil
     {{- else if .Primary.IsTextUnmarshaler -}}
     if err := {{.Receiver}}.{{.Primary.Name}}.UnmarshalText([]byte(value)); err != nil {
-        return errors.Newf(mapping.ClassFieldValue, "invalid primary field value: %v to parse string. Err: %v", {{.Receiver}}.{{.Primary.Name}}, err)
+        return errors.Wrapf(mapping.ErrFieldValue, "invalid primary field value: %v to parse string. Err: %v", {{.Receiver}}.{{.Primary.Name}}, err)
     }
     return nil
     {{- else if and .Primary.IsString (not .Primary.IsSlice) -}}
@@ -146,18 +146,18 @@ func ({{.Receiver}} *{{.Name}}) SetPrimaryKeyStringValue(value string) error {
     return nil
     {{- end}}
     {{- else -}}
-    return errors.New(mapping.ClassModelDefinition, "model '{{.Name}}' has invalid primary key field type to parse string.")
+    return errors.Wrap(mapping.ErrModelDefinition, "model '{{.Name}}' has invalid primary key field type to parse string.")
     {{- end}}
 }
 
 // SetFrom implements FromSetter interface.
 func ({{.Receiver}} *{{.Name}}) SetFrom(model mapping.Model) error {
     if model == nil {
-        return errors.New(query.ClassInvalidInput, "provided nil model to set from")
+        return errors.Wrap(query.ErrInvalidInput, "provided nil model to set from")
     }
     from, ok := model.(*{{.Name}})
     if !ok {
-        return errors.NewDetf(mapping.ClassModelNotMatch, "provided model doesn't match the input: %T", model)
+        return errors.WrapDetf(mapping.ErrModelNotMatch, "provided model doesn't match the input: %T", model)
     }
     *{{.Receiver}} = *from
     return nil
