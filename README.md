@@ -1,10 +1,10 @@
 ![Neuron Logo](logo_teal.svg)
 
-Neuron generator is the **golang** based generator for the `neuron` framework.
+Neuro**Go**Nesis is the **golang** based generator for the `neuron` framework.
 
-# Neuron Generator [![Build Status](https://travis-ci.com/neuronlabs/neuron-generator.svg?branch=master)](https://travis-ci.com/neuronlabs/neuron-generator) ![GitHub](https://img.shields.io/github/license/neuronlabs/neuron-generator)
+# Neuro**Go**Nesis [![Build Status](https://travis-ci.com/neuronlabs/neurogonesis.svg?branch=master)](https://travis-ci.com/neuronlabs/neurogonesis) ![GitHub](https://img.shields.io/github/license/neuronlabs/neurogonesis)
 
-Neuron generator is a part of the Neuron framework - [github.com/neuronlabs/neuron](https://github.com/neuronlabs/neuron).
+ is a part of the Neuron framework - [github.com/neuronlabs/neuron](https://github.com/neuronlabs/neuron).
 
 It is a CLI generator that enhances your models with implementing required methods and structures.
 
@@ -15,10 +15,10 @@ by providing the `go:generate` comments within your model files.
 
 ### Models
 
-`neuron-generator` can generate all required methods for the `neuron/mapping` model interfaces for all your models.
+`neurogonesis` can generate all required methods for the `neuron/mapping` model interfaces for all your models.
 
 In order to scan and generate paste following command in your models: 
-`//go:generate neuron-generator models --format=goimports --single-file .`
+`//go:generate neurogonesis models --format=goimports --single-file .`
 
 Then execute command `go generate` within the directory your files are located.
 
@@ -32,7 +32,7 @@ If you need to exclude some types that might be recognized as a model provide a 
 
 The `--format=goimports` formats file using `goimports` formatter.
 
-For more information type`neuron-generator models --help` .
+For more information type`neurogonesis models --help` .
 
 ### Collections
 
@@ -42,7 +42,7 @@ database model queries as well as customized functions and query builders.
 Collections are designed to execute queries easily, without the necessity of interface conversions.
 
 In order to scan and generate paste following command in your models: 
-`//go:generate neuron-generator collections --format=goimports --single-file .`
+`//go:generate neurogonesis collections --format=goimports --single-file .`
 
 Then execute command `go generate` within the directory your files are located.
 
@@ -56,5 +56,5 @@ If you need to exclude some types that might be recognized as a model provide a 
 
 The `--format=goimports` formats file using `goimports` formatter.
 
-For more information type`neuron-generator collections --help` .
+For more information type`neurogonesis collections --help` .
 
