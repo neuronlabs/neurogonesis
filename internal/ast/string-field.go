@@ -7,8 +7,8 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/neuronlabs/neuron-generator/input"
-	"github.com/neuronlabs/neuron-generator/internal/tempfuncs"
+	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/tempfuncs"
 )
 
 func (g *ModelGenerator) setFieldsStringGetters(model *input.Model) error {

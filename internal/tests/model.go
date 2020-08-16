@@ -5,11 +5,11 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/neuronlabs/neuron-generator/internal/tests/external"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/tests/external"
 )
 
-//go:generate neuron-generator models --format=goimports --single-file .
-//go:generate neuron-generator collections --format=goimports --single-file .
+//go:generate neurogonesis models --format=goimports --single-file .
+//go:generate neurogonesis collections --format=goimports --single-file .
 
 // User is testing model.
 type User struct {

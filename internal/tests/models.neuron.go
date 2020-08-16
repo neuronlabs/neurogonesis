@@ -10,9 +10,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/neuronlabs/neuron-generator/internal/tests/external"
 	"github.com/neuronlabs/neuron/errors"
 	"github.com/neuronlabs/neuron/mapping"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/tests/external"
 	"github.com/neuronlabs/neuron/query"
 )
 

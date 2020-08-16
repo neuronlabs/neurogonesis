@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/neuronlabs/neuron-generator/input"
+	"github.com/neuronlabs/neuron/neurogonesis/input"
 )
 
 func IsFieldWrappedSlice(field *input.Field) bool {

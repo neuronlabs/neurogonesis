@@ -26,8 +26,8 @@ import (
 	"github.com/neuronlabs/strcase"
 	"github.com/spf13/cobra"
 
-	"github.com/neuronlabs/neuron-generator/input"
-	"github.com/neuronlabs/neuron-generator/internal/ast"
+	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/ast"
 )
 
 // collectionsCmd represents the models command
@@ -38,7 +38,7 @@ var collectionsCmd = &cobra.Command{
 The collection is a struct that allows to create and execute type safe queries for provided input model type.
 A model type is provided with flag '-type' i.e.:
 
-neuron-generator collections -type MyModel -o ./collections`,
+neurogonesis collections -type MyModel -o ./collections`,
 	PreRun: modelsPreRun,
 	Run:    generateCollections,
 }

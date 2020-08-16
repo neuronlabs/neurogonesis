@@ -17,8 +17,8 @@ import (
 	"github.com/neuronlabs/strcase"
 	"golang.org/x/tools/go/packages"
 
-	"github.com/neuronlabs/neuron-generator/input"
-	"github.com/neuronlabs/neuron-generator/internal/tempfuncs"
+	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/tempfuncs"
 )
 
 const (

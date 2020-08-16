@@ -15,7 +15,7 @@ limitations under the License.
 */
 package main
 
-import "github.com/neuronlabs/neuron-generator/cmd"
+import "github.com/neuronlabs/neuron/neurogonesis/cmd"
 
 func main() {
 	cmd.Execute()

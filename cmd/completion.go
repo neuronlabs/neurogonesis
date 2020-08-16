@@ -29,12 +29,12 @@ var completionCmd = &cobra.Command{
 	Short: "Generates bash completion scripts",
 	Long: `To load completion run
 
-. <(neuron-generator completion)
+. <(neurogonesis completion)
 
 To configure your bash shell to load completions for each session add to your bashrc
 
 # ~/.bashrc or ~/.profile
-. <(neuron-generator completion)
+. <(neurogonesis completion)
 
 An optional flag 'output' creates specified file for completion scripts.`,
 	Run: func(cmd *cobra.Command, args []string) {

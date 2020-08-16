@@ -25,8 +25,8 @@ import (
 	"github.com/neuronlabs/strcase"
 	"github.com/spf13/cobra"
 
-	"github.com/neuronlabs/neuron-generator/input"
-	"github.com/neuronlabs/neuron-generator/internal/ast"
+	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron/neurogonesis/internal/ast"
 )
 
 // modelMethodsCmd represents the methods command
@@ -37,7 +37,7 @@ var modelsCmd = &cobra.Command{
 By default it creates github.com/neuronlabs/neuron/mapping model interfaces implementation 
 for provided input model type. A model type is provided with flag '-type' i.e.:
 
-neuron-generator models -type=MyModel .
+neurogonesis models -type=MyModel .
 Model methods must exists in the same namespace package. Due to the fact that the generator 
 creates these files in the same directory as input. 
 By default generator takes current working directory as an input.`,
