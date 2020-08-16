@@ -1,9 +1,9 @@
-module github.com/neuronlabs/neuron-generator
+module github.com/neuronlabs/neuron/generator
 
 go 1.13
 
 replace (
-	github.com/neuronlabs/neuron => ./../neuron
+	github.com/neuronlabs/neuron => ./../
 )
 
 require (

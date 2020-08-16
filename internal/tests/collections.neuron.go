@@ -188,7 +188,7 @@ func (c *carsQueryBuilder) Refresh() error {
 }
 
 // Get returns single Car model that matches given query.
-// If the model is not found the function returns error of query.ErrQueryNoResult.
+// If the model is not found the function returns error of query.ErrNoResult.
 func (c *carsQueryBuilder) Get() (*Car, error) {
 	if c.err != nil {
 		return nil, c.err
@@ -942,7 +942,7 @@ func (u *usersQueryBuilder) Refresh() error {
 }
 
 // Get returns single User model that matches given query.
-// If the model is not found the function returns error of query.ErrQueryNoResult.
+// If the model is not found the function returns error of query.ErrNoResult.
 func (u *usersQueryBuilder) Get() (*User, error) {
 	if u.err != nil {
 		return nil, u.err
