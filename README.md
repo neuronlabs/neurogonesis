@@ -1,6 +1,6 @@
 ![Neuron Logo](logo_teal.svg)
 
-Neuro**Go**Nesis is the **golang** based generator for the `neuron` framework.
+Neuro**G**o**N**esi**S** (`neurogns`) is the **golang** based generator for the `neuron` framework.
 
 # Neuro**Go**Nesis [![Build Status](https://travis-ci.com/neuronlabs/neurogonesis.svg?branch=master)](https://travis-ci.com/neuronlabs/neurogonesis) ![GitHub](https://img.shields.io/github/license/neuronlabs/neurogonesis)
 

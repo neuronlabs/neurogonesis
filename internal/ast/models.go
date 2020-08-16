@@ -7,7 +7,7 @@ import (
 	"github.com/neuronlabs/inflection"
 	"golang.org/x/tools/go/packages"
 
-	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron-extensions/neurogns/input"
 )
 
 func (g *ModelGenerator) extractFileModels(d *ast.GenDecl, file *ast.File, pkg *packages.Package) (models []*input.Model, err error) {

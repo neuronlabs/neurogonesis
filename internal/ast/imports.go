@@ -7,7 +7,7 @@ import (
 
 	"golang.org/x/tools/go/packages"
 
-	"github.com/neuronlabs/neuron/neurogonesis/input"
+	"github.com/neuronlabs/neuron-extensions/neurogns/input"
 )
 
 type importField struct {

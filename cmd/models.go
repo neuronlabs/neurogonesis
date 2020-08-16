@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 Jacek Kucharczyk kucjac@gmail.com
+Copyright © 2020 NAME HERE <EMAIL ADDRESS>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -16,145 +16,21 @@ limitations under the License.
 package cmd
 
 import (
-	"bytes"
-	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
-
-	"github.com/neuronlabs/strcase"
 	"github.com/spf13/cobra"
-
-	"github.com/neuronlabs/neuron/neurogonesis/input"
-	"github.com/neuronlabs/neuron/neurogonesis/internal/ast"
 )
 
-// modelMethodsCmd represents the methods command
+// modelsCmd represents the models command
 var modelsCmd = &cobra.Command{
 	Use:   "models",
-	Short: "Generates neuron model basic field and relation methods.",
-	Long: `This generator allows to create model interfaces used by other neuron components.
-By default it creates github.com/neuronlabs/neuron/mapping model interfaces implementation 
-for provided input model type. A model type is provided with flag '-type' i.e.:
+	Short: "A brief description of your command",
+	Long: `A longer description that spans multiple lines and likely contains examples
+and usage of using your command. For example:
 
-neurogonesis models -type=MyModel .
-Model methods must exists in the same namespace package. Due to the fact that the generator 
-creates these files in the same directory as input. 
-By default generator takes current working directory as an input.`,
-	PreRun: modelsPreRun,
-	Run:    generateModelMethods,
+Cobra is a CLI library for Go that empowers applications.
+This application is a tool to generate the needed files
+to quickly create a Cobra application.`,
 }
 
 func init() {
 	rootCmd.AddCommand(modelsCmd)
-
-	// Here you will define your flags and configuration settings.
-	modelsCmd.Flags().StringP("naming-convention", "n", "snake", `set the naming convention for the output models. 
-Possible values: 'snake', 'kebab', 'lower_camel', 'camel'`)
-	modelsCmd.Flags().BoolP("single-file", "s", false, "creates the methods within single file")
-}
-
-func generateModelMethods(cmd *cobra.Command, args []string) {
-	namingConvention, err := cmd.Flags().GetString("naming-convention")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		cmd.Usage()
-		os.Exit(2)
-	}
-
-	singleFile, err := cmd.Flags().GetBool("single-file")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		cmd.Usage()
-		os.Exit(2)
-	}
-
-	switch namingConvention {
-	case "kebab", "snake", "lower_camel", "camel":
-	default:
-		fmt.Fprintf(os.Stderr, "Error: provided unsupported naming convention: '%v'", namingConvention)
-		cmd.Usage()
-		os.Exit(2)
-	}
-	// Get the optional type names flag.
-	typeNames, err := cmd.Flags().GetStringSlice("type")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: loading flags failed: '%v\n", err)
-		os.Exit(2)
-	}
-
-	// Get the optional type names flag.
-	excludeTypes, err := cmd.Flags().GetStringSlice("exclude")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: loading flags failed: '%v\n", err)
-		os.Exit(2)
-	}
-
-	g := ast.NewModelGenerator(namingConvention, typeNames, tags, excludeTypes)
-
-	// Parse provided argument packages.
-	g.ParsePackages([]string{"."})
-
-	// Extract all models from given packages.
-	if err := g.ExtractPackages(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
-	}
-
-	// Get the directory from the arguments.
-	dir := directory(args)
-
-	buf := &bytes.Buffer{}
-
-	// Generate model files.
-	var modelNames []string
-	if !singleFile {
-		for _, model := range g.Models() {
-			fileName := filepath.Join(dir, strcase.ToSnake(model.Name)+"_model.neuron")
-			if model.TestFile {
-				fileName += "_test"
-			}
-			fileName += ".go"
-			generateFile(fileName, "model", buf, model)
-			modelNames = append(modelNames, model.Name)
-		}
-	} else {
-		var testModels, models []*input.Model
-		for _, model := range g.Models() {
-			modelNames = append(modelNames, model.Name)
-			if model.TestFile {
-				testModels = append(testModels, model)
-			} else {
-				models = append(models, model)
-			}
-		}
-		if len(models) > 0 {
-			generateSingleFileMethods(models, dir, false, buf)
-		}
-		if len(testModels) > 0 {
-			generateSingleFileMethods(testModels, dir, true, buf)
-		}
-	}
-	fmt.Fprintf(os.Stdout, "Success. Generated methods for: %s models.\n", strings.Join(modelNames, ","))
-}
-
-func generateSingleFileMethods(models []*input.Model, dir string, isTesting bool, buf *bytes.Buffer) {
-	multiModels := &input.MultiModel{}
-	imports := map[string]struct{}{}
-	for _, model := range models {
-		for _, imp := range model.Imports {
-			imports[imp] = struct{}{}
-		}
-		multiModels.PackageName = model.PackageName
-		multiModels.Models = append(multiModels.Models, model)
-	}
-	for imp := range imports {
-		multiModels.Imports = append(multiModels.Imports, imp)
-	}
-	fileName := filepath.Join(dir, "models.neuron")
-	if isTesting {
-		fileName += "_test"
-	}
-	fileName += ".go"
-	generateFile(fileName, "single-file-models", buf, multiModels)
 }

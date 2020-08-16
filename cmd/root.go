@@ -30,8 +30,8 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/tools/imports"
 
-	"github.com/neuronlabs/neuron/neurogonesis/bintemplates"
-	"github.com/neuronlabs/neuron/neurogonesis/internal/tempfuncs"
+	"github.com/neuronlabs/neuron-extensions/neurogns/bintemplates"
+	"github.com/neuronlabs/neuron-extensions/neurogns/internal/tempfuncs"
 )
 
 var (
@@ -42,7 +42,7 @@ var (
 
 // rootCmd represents the base command when called without any sub commands
 var rootCmd = &cobra.Command{
-	Use:   "neurogonesis",
+	Use:   "neurogns",
 	Short: "A code generator for the neuron package.",
 	Long:  `It is a code generator for the Golang github.com/neuronlabs/neuron package.`,
 }

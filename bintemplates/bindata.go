@@ -115,7 +115,7 @@ func bindataTemplates00importstmpl() (*asset, error) {
 		size: 132,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -123,7 +123,7 @@ func bindataTemplates00importstmpl() (*asset, error) {
 	return a, nil
 }
 
-var _bindataTemplates01initializecollectionstmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\x8f\xb1\x6e\xc3\x30\x0c\x44\x77\x7f\xc5\xc1\xbb\x95\xbd\x6b\xd3\x21\x4b\xd2\xc1\x7b\xc1\x5a\x74\x4a\x54\xa2\x0c\x89\x41\xd1\x0a\xfa\xf7\xc2\x76\x81\x14\xd9\x88\x77\x7c\xc0\x5d\xad\x9e\x67\x51\x46\x2f\x2a\x26\x14\xe4\x87\xdf\xa6\x14\x02\x4f\x26\x49\x4b\x8f\xa1\xb5\xee\x70\xc0\x73\xf2\x8c\x2b\x2b\x67\x32\xf6\x78\xff\x86\xf2\x2d\x27\x1d\xfe\x58\xca\x0e\xc7\x0b\xce\x97\x11\x2f\xc7\xd3\xe8\x56\x67\xfc\x90\x82\x59\x02\xe3\x8b\xca\x3f\x99\xec\x69\x8d\x6b\x85\x49\xe4\x62\x14\x17\xb4\xd6\x75\x0b\x4d\x9f\x74\x65\xd4\xea\x5e\xf7\xf3\x4c\x91\x5b\xeb\x6a\x95\x19\xee\x14\x97\x94\xad\x60\x03\xc6\x71\x09\x64\x6b\xf1\x1d\xf7\x70\x7b\xc2\xea\x1f\x3e\xee\x7b\x86\xfb\xca\x3c\xcc\x37\xdd\x60\x0f\xb7\x09\x60\xf5\x68\xed\x37\x00\x00\xff\xff\x89\xb2\x81\x5f\x13\x01\x00\x00")
+var _bindataTemplates01initializecollectionstmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\x8f\xb1\x4e\xc4\x30\x10\x44\xfb\x7c\xc5\x28\x7d\x7c\x3d\x2d\x47\x71\xcd\x1d\x45\x7a\xb4\xc4\x9b\xb0\xc2\x5e\x47\xf6\x9e\x10\x58\xfe\x77\x94\xa4\x38\x44\xb7\x7a\x33\x23\xed\xab\xd5\xf3\x2c\xca\xe8\x45\xc5\x84\x82\xfc\xf0\xdb\x94\x42\xe0\xc9\x24\x69\xe9\x31\xb4\xd6\x9d\x4e\x78\x4e\x9e\xb1\xb0\x72\x26\x63\x8f\xf7\x6f\x28\xdf\x73\x5a\x92\x72\x91\xe2\x70\xbe\xe1\x7a\x1b\xf1\x72\xbe\x8c\x6e\xeb\x8f\x1f\x52\x30\x4b\x60\x7c\x51\xf9\x33\x24\x7b\xda\xe2\x5a\x61\x12\xb9\x18\xc5\x15\xad\x75\xdd\x4a\xd3\x27\x2d\x8c\x5a\xdd\xeb\x71\x5e\x29\x72\x6b\x5d\xad\x32\xc3\x5d\xe2\x9a\xb2\x15\xec\xc0\x38\xae\x81\x6c\x7b\xfa\xc0\x3d\xdc\x91\xb0\xfa\x7f\x8d\x87\xcb\xf0\x30\xcc\xc3\x7c\xd7\x1d\xf6\x70\xfb\x00\xac\x1e\xad\xfd\x06\x00\x00\xff\xff\xc4\xb5\xbf\x6c\x0f\x01\x00\x00")
 
 func bindataTemplates01initializecollectionstmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -142,10 +142,10 @@ func bindataTemplates01initializecollectionstmpl() (*asset, error) {
 
 	info := bindataFileInfo{
 		name: "templates/01_initialize_collections.tmpl",
-		size: 275,
+		size: 271,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -153,7 +153,7 @@ func bindataTemplates01initializecollectionstmpl() (*asset, error) {
 	return a, nil
 }
 
-var _bindataTemplates02collectiontmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\x8f\x3d\x4e\x04\x31\x0c\x46\xfb\x39\xc5\xa7\xf4\xc9\xf6\xb4\x2c\x05\xcd\x2e\xc5\x5c\xc0\x4c\xbc\x43\x44\xfe\x94\x18\x21\x64\xe5\xee\x28\x0c\x12\x68\x3b\xcb\xcf\x4f\xf2\x53\xf5\x7c\x0b\x99\x61\xb6\x12\x23\x6f\x12\x4a\x36\xb0\x63\x2c\xa7\x13\x1e\x8b\x67\xec\x9c\xb9\x91\xb0\xc7\xeb\x17\x32\x7f\xb4\x92\xed\xef\xae\x34\x87\xf3\x15\x97\xeb\x8a\xa7\xf3\xf3\xea\xa6\xb3\xbe\x85\x8e\x5b\x88\x8c\x4f\xea\xff\x64\x92\x87\x89\x55\x21\x21\x71\x17\x4a\x15\x63\x2c\x4b\xa5\xed\x9d\x76\x86\xaa\x7b\x39\xc6\x0b\x25\x9e\x44\x55\x38\xd5\x48\xc2\x30\x21\xd5\xd2\xa4\x1b\xb8\x7b\xf2\xf7\xb6\xfd\x29\x09\x47\xc1\xbc\x53\xb5\xe0\xec\xc7\xf8\x0e\x00\x00\xff\xff\xfc\x82\x68\x40\xe5\x00\x00\x00")
+var _bindataTemplates02collectiontmpl = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x5c\x8f\xbb\x4e\xc3\x40\x10\x45\x7b\x7f\xc5\x95\x7b\x3b\x3d\x2d\xa1\xa0\x49\x28\xfc\x03\x83\x7d\x63\x46\xec\x4b\xde\x41\x08\x8d\xf6\xdf\xd1\x92\x02\x44\x37\xd2\x39\x23\x9d\xeb\xbe\xf1\xa6\x89\x18\xd7\x1c\x02\x57\xd3\x9c\x46\x4c\xad\x0d\xa7\x13\x1e\xf3\x46\xec\x4c\x3c\xc4\xb8\xe1\xf5\x0b\x89\x1f\x47\xde\x73\x62\xd5\x3a\xe3\x7c\xc5\xe5\xba\xe0\xe9\xfc\xbc\xcc\xdd\x5f\xde\xb4\xe2\xa6\x81\xf8\x94\xfa\xe7\x51\xec\xa1\x63\x77\x98\x46\x56\x93\x58\xd0\xda\x30\x14\x59\xdf\x65\x27\xdc\xe7\x97\xfb\x79\x91\xc8\x4e\xdc\x8d\xb1\x04\x31\x62\xd4\x58\xf2\x61\x75\xc4\xfc\x9f\xfc\x26\x4f\x3f\x2b\xf4\x5e\xdf\x3d\xf7\x09\x4c\x5b\x6b\xdf\x01\x00\x00\xff\xff\x7d\x2e\x09\x85\xe1\x00\x00\x00")
 
 func bindataTemplates02collectiontmplBytes() ([]byte, error) {
 	return bindataRead(
@@ -172,10 +172,10 @@ func bindataTemplates02collectiontmpl() (*asset, error) {
 
 	info := bindataFileInfo{
 		name: "templates/02_collection.tmpl",
-		size: 229,
+		size: 225,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1595457055, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -205,7 +205,7 @@ func bindataTemplates03collectionstructuretmpl() (*asset, error) {
 		size: 10139,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596925831, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -235,7 +235,7 @@ func bindataTemplates04collectionbuildertmpl() (*asset, error) {
 		size: 12804,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596927609, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -265,7 +265,7 @@ func bindataTemplates05modeltmpl() (*asset, error) {
 		size: 226,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -295,7 +295,7 @@ func bindataTemplates06primarytmpl() (*asset, error) {
 		size: 6608,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596925831, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -325,7 +325,7 @@ func bindataTemplates07fieldertmpl() (*asset, error) {
 		size: 13245,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596925831, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -355,7 +355,7 @@ func bindataTemplates08singlerelationertmpl() (*asset, error) {
 		size: 2140,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596925777, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -385,7 +385,7 @@ func bindataTemplates09multirelationertmpl() (*asset, error) {
 		size: 5518,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596925777, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -415,7 +415,7 @@ func bindataTemplates10modeldefinitiontmpl() (*asset, error) {
 		size: 268,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -445,7 +445,7 @@ func bindataTemplates11singlefilemodelstmpl() (*asset, error) {
 		size: 449,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1595458082, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -475,7 +475,7 @@ func bindataTemplates12singlefilecollectionstmpl() (*asset, error) {
 		size: 508,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1596536269, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -505,7 +505,7 @@ func bindataTemplates13collectiondefinitiontmpl() (*asset, error) {
 		size: 123,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -535,7 +535,7 @@ func bindataTemplates14collectioninitializertmpl() (*asset, error) {
 		size: 150,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147826, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
@@ -565,7 +565,7 @@ func bindataTemplates15collectioninitializerfunctiontmpl() (*asset, error) {
 		size: 578,
 		md5checksum: "",
 		mode: os.FileMode(436),
-		modTime: time.Unix(1591147825, 0),
+		modTime: time.Unix(1597612013, 0),
 	}
 
 	a := &asset{bytes: bytes, info: info}
